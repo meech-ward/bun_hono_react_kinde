@@ -1,0 +1,16 @@
+{
+  "name": "app",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.1.11",
+    "hono": "^3.12.0",
+    "zod": "^3.22.4"
+  }
+}
