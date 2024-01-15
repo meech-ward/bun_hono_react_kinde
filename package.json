@@ -2,7 +2,13 @@
   "name": "app",
   "module": "index.ts",
   "type": "module",
+  "scripts": {
+    "dev": "bun run --watch index.ts"
+  },
   "devDependencies": {
+    "@flydotio/dockerfile": "latest",
+    "@hono/swagger-ui": "^0.2.1",
+    "@tanstack/router-devtools": "^1.1.6",
     "bun-types": "latest"
   },
   "peerDependencies": {
@@ -10,6 +16,8 @@
   },
   "dependencies": {
     "@hono/zod-validator": "^0.1.11",
+    "@tanstack/react-query": "^5.17.1",
+    "@tanstack/react-router": "^1.1.6",
     "hono": "^3.12.0",
     "zod": "^3.22.4"
   }

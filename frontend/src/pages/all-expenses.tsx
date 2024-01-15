@@ -1,0 +1,71 @@
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
+
+import { formatCurrency } from "@/lib/utils";
+import api from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
+
+export default function AllExpenses() {
+  const { isPending, error, data } = useQuery({
+    queryKey: ["getAllExpenses"],
+    queryFn: () => api.expenses.$get().then((res) => res.json()),
+  });
+
+  if (error) return "An error has occurred: " + error.message;
+
+  console.log(data);
+
+  return (
+    <>
+      <h1 className="text-2xl">All Expenses</h1>
+      <Table>
+        <TableCaption>A list of your recent expenses.</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[100px]">Invoice</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>Date</TableHead>
+            <TableHead className="text-right">Amount</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {isPending ? (
+            <TableRow>
+              <TableCell className="font-medium">
+                <Skeleton className="h-4 w-full"></Skeleton>
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-4 w-full"></Skeleton>
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-4 w-full"></Skeleton>
+              </TableCell>
+              <TableCell className="text-right">
+                <Skeleton className="h-4 w-full"></Skeleton>
+              </TableCell>
+            </TableRow>
+          ) : (
+            data.expenses.map((expense) => (
+              <TableRow key={expense.id}>
+                <TableCell className="font-medium">{expense.title}</TableCell>
+                <TableCell>{expense.category}</TableCell>
+                <TableCell>{expense.date}</TableCell>
+                <TableCell className="text-right">
+                  {formatCurrency(expense.amount)}
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </>
+  );
+}
