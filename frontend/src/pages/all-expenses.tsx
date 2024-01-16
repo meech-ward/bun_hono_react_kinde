@@ -32,7 +32,6 @@ export default function AllExpenses() {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px]">Invoice</TableHead>
-              <TableHead>Category</TableHead>
               <TableHead>Date</TableHead>
               <TableHead className="text-right">Amount</TableHead>
             </TableRow>
@@ -57,7 +56,6 @@ export default function AllExpenses() {
               data.expenses.map((expense) => (
                 <TableRow key={expense.id}>
                   <TableCell className="font-medium">{expense.title}</TableCell>
-                  <TableCell>{expense.category}</TableCell>
                   <TableCell>{expense.date}</TableCell>
                   <TableCell className="text-right">
                     {formatCurrency(expense.amount)}

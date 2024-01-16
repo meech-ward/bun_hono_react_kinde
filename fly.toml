@@ -20,3 +20,8 @@ primary_region = "sea"
   cpu_kind = "shared"
   cpus = 1
   memory_mb = 1024
+
+[env]
+  KINDE_DOMAIN="https://codegpt.kinde.com"
+  KINDE_REDIRECT_URI="https://demo-expenses-1.fly.dev/callback"
+  KINDE_LOGOUT_REDIRECT_URI="https://demo-expenses-1.fly.dev"
