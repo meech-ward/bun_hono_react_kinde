@@ -9,18 +9,14 @@ import { Calendar } from "@/components/ui/calendar";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
-// import { Label } from "@/components/ui/label";
-import { PostExpenseType } from "../../../expenses";
+import { PostExpenseType } from "@server/expenses";
 
 import { useNavigate } from "@tanstack/react-router";
 
 import api from "@/lib/api";
 
-import { userQueryOptions } from "@/lib/user-query";
-import { useSuspenseQuery } from "@tanstack/react-query";
-
 export default function NewExpense() {
-  const navigate = useNavigate({ from: '/new-expense' })
+  const navigate = useNavigate({ from: "/new-expense" });
 
   const mutation = useMutation({
     mutationFn: async (data: PostExpenseType) => {
@@ -33,9 +29,6 @@ export default function NewExpense() {
     },
   });
 
-  const userQuery = useSuspenseQuery(userQueryOptions);
-  const user = userQuery.data;
-
   const form = useForm({
     defaultValues: {
       title: "",
@@ -46,25 +39,19 @@ export default function NewExpense() {
       const data = { ...value, date: value.date.toISOString().split("T")[0] };
       await mutation.mutateAsync(data);
       console.log("done");
-      navigate({to: '/all-expenses'})
- 
+      navigate({ to: "/all-expenses" });
     },
     validatorAdapter: zodValidator,
   });
 
-  // queryClient.invalidateQueries({ queryKey: ['todos'] })
-
   return (
     <>
       <h1 className="text-2xl">New Expense</h1>
-      <h1>{user.email}</h1>
       {mutation.isError && (
         <Alert>
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Error!</AlertTitle>
-          <AlertDescription>
-            {mutation.error.message}
-          </AlertDescription>
+          <AlertDescription>{mutation.error.message}</AlertDescription>
         </Alert>
       )}
       <form.Provider>

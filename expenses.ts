@@ -4,9 +4,9 @@ import { zValidator } from "@hono/zod-validator";
 import { expenses, expenseSchema } from "./fakedb";
 import { z } from "zod";
 
+// These are both imported into the react app for validation before POST
 export const PostExpenseType = expenseSchema.omit({ id: true, category: true }).strict();
 export type PostExpenseType = z.infer<typeof PostExpenseType>;
-console.log("PostExpenseType", new Date());
 
 const routes = new Hono()
   .get("/", async (c) => {

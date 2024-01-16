@@ -1,5 +1,5 @@
 import { hc, InferResponseType } from "hono/client"
-import { type ApiRoutes } from "../../../app"
+import { type ApiRoutes } from "@server/app"
 
 const client = hc<ApiRoutes>("/")
 

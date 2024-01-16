@@ -1,7 +1,6 @@
 import api from "@/lib/api";
 import { queryOptions } from "@tanstack/react-query";
 
-
 async function authenticatedUser() {
   const res = await api.me.$get();
   if (!res.ok) {
@@ -14,5 +13,5 @@ async function authenticatedUser() {
 export const userQueryOptions = queryOptions({
   queryKey: ["user-me"],
   queryFn: () => authenticatedUser(),
-})
-
+  staleTime: Infinity,
+});

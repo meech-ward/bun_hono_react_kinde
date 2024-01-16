@@ -1,8 +1,13 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+import { Suspense } from "react";
+
 import HomePage from "@/pages/home";
-import LoginPage from "@/pages/login";
 import AllExpensesPage from "@/pages/all-expenses";
 import NewExpensePage from "@/pages/new-expense";
+import LoginPage from "@/pages/login";
+import AboutPage from "@/pages/about";
+
 import RootLayout from "@/root-layout";
 
 import {
@@ -11,88 +16,71 @@ import {
   Route,
   RootRoute,
   NotFoundRoute,
+  Outlet,
 } from "@tanstack/react-router";
-
-import api from "@/lib/api";
 import ProfilePage from "./pages/profile";
+
+import { userQueryOptions } from "@/lib/user-query";
+
+const queryClient = new QueryClient();
 
 const rootRoute = new RootRoute({
   component: RootLayout,
 });
 
-async function authenticatedUser() {
-  try {
-    const res = await api.me.$get();
-    if (!res.ok) {
-      return null;
-    }
-    const data = await res.json();
-    return data.user;
-  } catch (err) {
-    return null;
-  }
-}
-
 const authRoute = new Route({
   getParentRoute: () => rootRoute,
   id: "auth",
+  component: () => {
+    const { user } = authRoute.useRouteContext();
+
+    if (!user) {
+      return <LoginPage />;
+    }
+    return (
+      <Suspense>
+        <Outlet />
+      </Suspense>
+    );
+  },
   beforeLoad: async () => {
-    console.log("before load");
-    const user = await authenticatedUser();
-    return { user };
+    try {
+      const user = await queryClient.fetchQuery(userQueryOptions);
+      return { user };
+    } catch (error) {
+      return { user: null };
+    }
   },
 });
 
 const indexRoute = new Route({
   getParentRoute: () => authRoute,
   path: "/",
-  component: () => {
-    const { user } = indexRoute.useRouteContext();
-    console.log(user);
-    if (!user) {
-      return <LoginPage />;
-    }
-    return <HomePage />;
-  },
+  component: HomePage,
 });
 
-const aboutRoute = new Route({
-  getParentRoute: () => rootRoute,
-  path: "/about",
+const allExpensesRoute = new Route({
+  getParentRoute: () => authRoute,
+  path: "/all-expenses",
+  component: AllExpensesPage,
+});
+
+const newExpenseRoute = new Route({
+  getParentRoute: () => authRoute,
+  path: "/new-expense",
   component: NewExpensePage,
 });
 
 const profileRoute = new Route({
   getParentRoute: () => authRoute,
   path: "/profile",
-  component: () => {
-    const { user } = profileRoute.useRouteContext();
-    console.log(user);
-    if (!user) {
-      return <LoginPage />;
-    }
-    return <ProfilePage user={user} />;
-  },
-  // loader: async () => {
-  //   // wait 
-  //   await new Promise((resolve) => setTimeout(resolve, 4000));
-  //   return queryClient.ensureQueryData(queryOptions({
-  //     queryKey: ["user-me"],
-  //     queryFn: () => authenticatedUser(),
-  //   }))
-  // },
+  component: ProfilePage,
 });
 
-const allExpensesRoute = new Route({
-  getParentRoute: () => rootRoute,
-  path: "/all-expenses",
-  component: AllExpensesPage,
-});
-
-const newExpenseRoute = new Route({
-  getParentRoute: () => rootRoute,
-  path: "/new-expense",
-  component: NewExpensePage,
+const aboutRoute = new Route({
+  getParentRoute: () => indexRoute,
+  path: "/about",
+  component: AboutPage,
 });
 
 const notFoundRoute = new NotFoundRoute({
@@ -118,7 +106,6 @@ declare module "@tanstack/react-router" {
   }
 }
 
-const queryClient = new QueryClient();
 
 function App() {
   return (

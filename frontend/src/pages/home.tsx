@@ -9,20 +9,21 @@ export default function HomePage() {
     queryFn: () => api.expenses.total.$get().then((res) => res.json()),
   });
 
-  if (error) return "An error has occurred: " + error.message;
-
   const totalSpent = formatCurrency(data?.total ?? 0);
 
   return (
-    <Card className="w-fit mx-auto">
-      <CardHeader>
-        <CardTitle className="text-sm">Total Spent:</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">
-          {isPending ? "..." : totalSpent}
-        </div>
-      </CardContent>
-    </Card>
+    <>
+      <Card className="w-fit mx-auto">
+        <CardHeader>
+          <CardTitle className="text-sm">Total Spent:</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {error ? "An error has occurred: " + error.message : null}
+          <div className="text-2xl font-bold">
+            {isPending ? "..." : totalSpent}
+          </div>
+        </CardContent>
+      </Card>
+    </>
   );
 }

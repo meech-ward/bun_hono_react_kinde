@@ -6,15 +6,8 @@ import {
 } from "@kinde-oss/kinde-typescript-sdk";
 
 import { Hono, Context, MiddlewareHandler } from "hono";
-import {
-  getCookie,
-  getSignedCookie,
-  setCookie,
-  setSignedCookie,
-  deleteCookie,
-} from "hono/cookie";
+import { getCookie, setCookie, deleteCookie } from "hono/cookie";
 
-// Client for authorization code flow
 export const kindeClient = createKindeServerClient(
   GrantType.AUTHORIZATION_CODE,
   {
@@ -48,18 +41,32 @@ export const sessionManager = (c: Context): SessionManager => ({
   },
 });
 
-export const authMiddleware: MiddlewareHandler<{
+export const protectRoute: MiddlewareHandler = async (c, next) => {
+  try {
+    const manager = sessionManager(c);
+    const isAuthenticated = await kindeClient.isAuthenticated(manager);
+    if (!isAuthenticated) {
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+    await next();
+  } catch (e) {
+    console.error(e);
+    return c.json({ error: "Unauthorized" }, 401);
+  }
+};
+
+export const getUser: MiddlewareHandler<{
   Variables: {
     user: UserType;
   };
 }> = async (c, next) => {
   try {
-    const _sessionManager = sessionManager(c);
-    const isAuthenticated = await kindeClient.isAuthenticated(_sessionManager);
+    const manager = sessionManager(c);
+    const isAuthenticated = await kindeClient.isAuthenticated(manager);
     if (!isAuthenticated) {
       return c.json({ error: "Unauthorized" }, 401);
     }
-    const profile = await kindeClient.getUserProfile(_sessionManager);
+    const profile = await kindeClient.getUserProfile(manager);
     c.set("user", profile);
     await next();
   } catch (e) {

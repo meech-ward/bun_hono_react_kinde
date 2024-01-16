@@ -1,14 +1,15 @@
 import { Hono } from "hono";
 import { serveStatic } from "hono/bun";
 
-import { authRoutes, authMiddleware } from "./auth";
+import { authRoutes, getUser } from "./auth";
 import expenseRoute from "./expenses";
 
 const app = new Hono();
+
 const apiRoutes = app
   .basePath("/api")
   .route("/expenses", expenseRoute)
-  .get("/me", authMiddleware, async (c) => {
+  .get("/me", getUser, async (c) => {
     const user = await c.var.user;
     return c.json({ user });
   });
