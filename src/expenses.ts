@@ -1,10 +1,9 @@
 import { Hono } from "hono";
 
 import { zValidator } from "@hono/zod-validator";
-import { expenses } from "./fakedb";
 import { expenses as expensesTable } from "./db/schema/expenses";
 
-import { db, desc, eq } from "./db";
+import { db, desc, eq, sum, and } from "./db";
 
 import { getUser } from "./auth";
 
@@ -18,7 +17,7 @@ const routes = new Hono()
       .from(expensesTable)
       .where(eq(expensesTable.userId, user.id))
       .orderBy(desc(expensesTable.createdAt));
-      console.log({expenses})
+    console.log({ expenses });
     return c.json({ expenses: expenses });
   })
   .post("/", getUser, zValidator("json", PostExpense), async (c) => {
@@ -30,27 +29,37 @@ const routes = new Hono()
       .values({ ...expense, userId: user.id })
       .returning();
 
-    c.status(201);
-    return c.json({ expense: dbExpense });
+    return c.json({ expense: dbExpense }, 201);
   })
-  .get("/total", (c) => {
-    return c.json({ total: expenses.reduce((a, b) => a + b.amount, 0) });
+  .get("/total", getUser, async (c) => {
+    const user = c.var.user;
+    const result = await db
+      .select({ value: sum(expensesTable.amount) })
+      .from(expensesTable)
+      .where(eq(expensesTable.userId, user.id))
+      .limit(1)
+      .then((r) => r[0]);
+    return c.json({ total: result.value });
   })
-  .get("/:id{[0-9]+}", (c) => {
+  .get("/:id{[0-9]+}", getUser, async (c) => {
+    const user = c.var.user;
     const id = Number.parseInt(c.req.param("id"));
-    const expense = expenses.find((e) => e.id === id);
-    if (!expense) {
-      return c.json({ message: "Not Found" }, 404);
-    }
+    const expense = await db
+      .select()
+      .from(expensesTable)
+      .where(and(eq(expensesTable.id, id), eq(expensesTable.userId, user.id)))
+      .limit(1)
+      .then((r) => r[0]);
     return c.json({ expense });
   })
-  .delete((c) => {
+  .delete("/:id{[0-9]+}", getUser, async (c) => {
     const id = Number.parseInt(c.req.param("id"));
-    const expense = expenses.find((e) => e.id === id);
-    if (!expense) {
-      return c.json({ message: "Not Found" }, 404);
-    }
-    expenses.splice(expenses.indexOf(expense), 1);
+    const user = c.var.user;
+    const expense = await db
+      .delete(expensesTable)
+      .where(and(eq(expensesTable.id, id), eq(expensesTable.userId, user.id)))
+      .returning()
+      .then((r) => r[0]);
 
     return c.json({ expense });
   });

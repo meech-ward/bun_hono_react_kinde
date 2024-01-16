@@ -56,7 +56,7 @@ export default function AllExpenses() {
               data.expenses.map((expense) => (
                 <TableRow key={expense.id}>
                   <TableCell className="font-medium">{expense.title}</TableCell>
-                  <TableCell>{expense.date}</TableCell>
+                  <TableCell>{expense.date.split("T")[0]}</TableCell>
                   <TableCell className="text-right">
                     {formatCurrency(expense.amount)}
                   </TableCell>
