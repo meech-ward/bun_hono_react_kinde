@@ -1,27 +1,37 @@
 import { Hono } from "hono";
 
 import { zValidator } from "@hono/zod-validator";
-import { expenses, expenseSchema } from "./fakedb";
-import { z } from "zod";
+import { expenses } from "./fakedb";
+import { expenses as expensesTable } from "./db/schema/expenses";
 
-// These are both imported into the react app for validation before POST
-export const PostExpenseType = expenseSchema.omit({ id: true, category: true }).strict();
-export type PostExpenseType = z.infer<typeof PostExpenseType>;
+import { db, desc, eq } from "./db";
+
+import { getUser } from "./auth";
+
+import { PostExpense } from "./postTypes";
 
 const routes = new Hono()
-  .get("/", async (c) => {
-    const { category } = c.req.query();
-    console.table({ category });
+  .get("/", getUser, async (c) => {
+    const user = c.var.user;
+    const expenses = await db
+      .select()
+      .from(expensesTable)
+      .where(eq(expensesTable.userId, user.id))
+      .orderBy(desc(expensesTable.createdAt));
+      console.log({expenses})
     return c.json({ expenses: expenses });
   })
-  .post("/", zValidator("json", PostExpenseType), async (c) => {
-    const expense = await c.req.json();
-    expense.id = expenses.length + 1;
-    expenses.push(expense);
-    // wait 
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
+  .post("/", getUser, zValidator("json", PostExpense), async (c) => {
+    const expense = await c.req.valid("json");
+    const user = c.var.user;
+
+    const dbExpense = await db
+      .insert(expensesTable)
+      .values({ ...expense, userId: user.id })
+      .returning();
+
     c.status(201);
-    return c.json({ expense });
+    return c.json({ expense: dbExpense });
   })
   .get("/total", (c) => {
     return c.json({ total: expenses.reduce((a, b) => a + b.amount, 0) });
@@ -50,4 +60,3 @@ const routes = new Hono()
 // })
 
 export default routes;
-

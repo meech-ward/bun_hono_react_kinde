@@ -9,7 +9,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
-import { PostExpenseType } from "@server/expenses";
+import { PostExpense } from "@server/postTypes";
 
 import { useNavigate } from "@tanstack/react-router";
 
@@ -19,7 +19,7 @@ export default function NewExpense() {
   const navigate = useNavigate({ from: "/new-expense" });
 
   const mutation = useMutation({
-    mutationFn: async (data: PostExpenseType) => {
+    mutationFn: async (data: PostExpense) => {
       const res = await api.expenses.$post({ json: data });
       if (!res.ok) {
         throw new Error("An error occurred while creating the expense");
@@ -32,7 +32,7 @@ export default function NewExpense() {
   const form = useForm({
     defaultValues: {
       title: "",
-      amount: 0,
+      amount: "",
       date: new Date(),
     },
     onSubmit: async ({ value }) => {
@@ -67,7 +67,7 @@ export default function NewExpense() {
             <form.Field
               name="title"
               validators={{
-                onChange: PostExpenseType.shape.title,
+                onChange: PostExpense.shape.title,
               }}
               children={(field) => (
                 <Label>
@@ -88,7 +88,7 @@ export default function NewExpense() {
             <form.Field
               name="amount"
               validators={{
-                onChange: PostExpenseType.shape.amount,
+                onChange: PostExpense.shape.amount,
               }}
               children={(field) => (
                 <Label>
@@ -98,7 +98,7 @@ export default function NewExpense() {
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(e) =>
-                      field.handleChange(Number.parseInt(e.target.value))
+                      field.handleChange(e.target.value)
                     }
                   />
                   {field.state.meta.errors && (

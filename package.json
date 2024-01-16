@@ -1,15 +1,16 @@
 {
   "name": "app",
-  "module": "index.ts",
+  "module": "src/index.ts",
   "type": "module",
   "scripts": {
-    "dev": "bun run --watch index.ts"
+    "dev": "bun run --watch src/index.ts"
   },
   "devDependencies": {
     "@flydotio/dockerfile": "latest",
     "@hono/swagger-ui": "^0.2.1",
     "@tanstack/router-devtools": "^1.1.6",
-    "bun-types": "^1.0.22"
+    "bun-types": "^1.0.22",
+    "drizzle-kit": "^0.20.12"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
@@ -21,8 +22,12 @@
     "@kinde-oss/kinde-typescript-sdk": "^2.5.2",
     "@tanstack/react-query": "^5.17.1",
     "@tanstack/react-router": "^1.1.6",
+    "drizzle-orm": "^0.29.3",
+    "drizzle-zod": "^0.5.1",
     "express": "^4.18.2",
     "hono": "^3.12.0",
+    "node-postgres": "^0.6.2",
+    "postgres": "^3.4.3",
     "zod": "^3.22.4"
   }
 }

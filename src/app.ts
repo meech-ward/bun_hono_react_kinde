@@ -18,7 +18,12 @@ app.route("/", authRoutes);
 
 // app.use('/favicon.ico', serveStatic({ path: './favicon.ico' }))
 app.get("*", serveStatic({ root: "./frontend/dist" }));
-app.get("*", serveStatic({ path: "./frontend/dist/index.html" }));
+app.get(
+  "*",
+  serveStatic({
+    path: "./frontend/dist/index.html",
+  })
+);
 
 export default app;
 export type ApiRoutes = typeof apiRoutes;
