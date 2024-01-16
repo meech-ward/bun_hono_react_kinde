@@ -9,15 +9,19 @@
     "@flydotio/dockerfile": "latest",
     "@hono/swagger-ui": "^0.2.1",
     "@tanstack/router-devtools": "^1.1.6",
-    "bun-types": "latest"
+    "bun-types": "^1.0.22"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.1.11",
+    "@kinde-oss/kinde-node-express": "^1.0.12",
+    "@kinde-oss/kinde-nodejs-sdk": "^1.2.3",
+    "@kinde-oss/kinde-typescript-sdk": "^2.5.2",
     "@tanstack/react-query": "^5.17.1",
     "@tanstack/react-router": "^1.1.6",
+    "express": "^4.18.2",
     "hono": "^3.12.0",
     "zod": "^3.22.4"
   }

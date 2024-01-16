@@ -8,6 +8,11 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": "http://localhost:3000",
+      "^/(login|logout|register|callback)": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+        rewrite: (path) => path
+      },
     },
   },
   resolve: {
