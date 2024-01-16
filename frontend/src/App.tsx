@@ -37,11 +37,7 @@ const authRoute = new Route({
     if (!user) {
       return <LoginPage />;
     }
-    return (
-      <Suspense>
-        <Outlet />
-      </Suspense>
-    );
+    return <Outlet />;
   },
   beforeLoad: async () => {
     try {
@@ -105,7 +101,6 @@ declare module "@tanstack/react-router" {
     router: typeof router;
   }
 }
-
 
 function App() {
   return (
