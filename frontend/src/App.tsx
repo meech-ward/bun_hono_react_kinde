@@ -1,7 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { Suspense } from "react";
-
 import HomePage from "@/pages/home";
 import AllExpensesPage from "@/pages/all-expenses";
 import NewExpensePage from "@/pages/new-expense";
