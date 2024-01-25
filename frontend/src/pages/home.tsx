@@ -3,10 +3,19 @@ import { formatCurrency } from "@/lib/utils";
 import api from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
+
+async function getTotalExpense() {
+  const res = await api.expenses.total.$get()
+  if (!res.ok) {
+    throw new Error("Something went wrong");
+  }
+  return res.json();
+}
+
 export default function HomePage() {
   const { isPending, error, data } = useQuery({
     queryKey: ["getTotalSpent"],
-    queryFn: () => api.expenses.total.$get().then((res) => res.json()),
+    queryFn: getTotalExpense,
   });
 
   const totalSpent = formatCurrency(data?.total ?? 0);
