@@ -15,8 +15,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@tanstack/react-form": "^0.13.1",
     "@tanstack/react-query": "^5.17.1",
-    "@tanstack/react-router": "^1.15.2",
-    "@tanstack/router-vite-plugin": "^1.12.3",
+    "@tanstack/react-router": "^1.15.7",
     "@tanstack/zod-form-adapter": "^0.13.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
@@ -28,6 +27,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@tanstack/router-vite-plugin": "^1.12.3",
     "@tanstack/router-cli": "^1.1.7",
     "@types/node": "^20.10.6",
     "@types/react": "^18.2.43",

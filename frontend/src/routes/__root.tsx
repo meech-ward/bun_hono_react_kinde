@@ -2,19 +2,19 @@ import { Outlet, Link } from "@tanstack/react-router";
 
 import { userQueryOptions } from "@/lib/user-query";
 import { useQuery } from "@tanstack/react-query";
-// import { createRootRoute } from "@tanstack/react-router";
 import { type QueryClient } from "@tanstack/react-query";
 
 import { createRootRouteWithContext } from "@tanstack/react-router";
 
-// export const Route = createRootRoute({
-//   component: RootLayout,
-// })
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  component: RootLayout,
-  notFoundComponent: () => <div>Not Found</div>,
-});
+import { NotFound } from "@/components/not-found"
+
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
+  {
+    component: RootLayout,
+    notFoundComponent: NotFound,
+  },
+);
 
 function RootLayout() {
   const { data: user } = useQuery(userQueryOptions);

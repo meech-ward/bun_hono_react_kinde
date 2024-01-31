@@ -1,7 +1,7 @@
 import api from "@/lib/api";
 import { queryOptions } from "@tanstack/react-query";
 
-async function authenticatedUser() {
+export async function authenticatedUser() {
   const res = await api.me.$get();
   if (!res.ok) {
     throw new Error("Network response was not ok");
@@ -14,4 +14,17 @@ export const userQueryOptions = queryOptions({
   queryKey: ["user-me"],
   queryFn: () => authenticatedUser(),
   staleTime: Infinity,
+});
+
+export async function getTotalExpense() {
+  const res = await api.expenses.total_amount.$get();
+  if (!res.ok) {
+    throw new Error("Something went wrong");
+  }
+  return res.json();
+}
+
+export const getTotalExpenseQueryOptions = queryOptions({
+  queryKey: ["getTotalSpent"],
+  queryFn: getTotalExpense,
 });

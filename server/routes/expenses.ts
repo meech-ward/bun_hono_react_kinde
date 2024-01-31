@@ -1,41 +1,53 @@
 import { Hono } from "hono";
 
 import { zValidator } from "@hono/zod-validator";
-import { expenses as expensesTable } from "./db/schema/expenses";
+import { expenses as expensesTable } from "../db/schema/expenses";
 
-import { db, desc, eq, sum, and, count } from "./db";
+import { db, desc, eq, sum, and, count } from "../db";
 import { z } from "zod";
-import { getUser } from "./auth";
+import { getUser } from "../auth";
 
-import { postExpenseSchema } from "./postTypes";
+import { postExpenseSchema } from "../postTypes";
+
+// const getParamsSchema = z.object({
+//   limit: z
+//     .string()
+//     .transform((v) => Number.parseInt(v))
+//     .refine((v) => !isNaN(v), { message: "limit must be an integer" })
+//     .optional()
+//     .default("100"),
+//   page: z
+//     .string()
+//     .transform((v) => Number.parseInt(v))
+//     .refine((v) => !isNaN(v), { message: "page must be an integer" })
+//     .optional()
+//     .default("1"),
+// });
 
 const getParamsSchema = z.object({
   limit: z
     .string()
-    .transform((v) => Number.parseInt(v))
-    .refine((v) => !isNaN(v), { message: "limit must be an integer" })
     .optional()
-    .default("100"),
-  page: z
-    .string()
-    .transform((v) => Number.parseInt(v))
-    .refine((v) => !isNaN(v), { message: "page must be an integer" })
-    .optional()
-    .default("1"),
+    .pipe(z.coerce.number().int().min(1).max(100).default(20)),
+  page: z.string().optional().pipe(z.coerce.number().int().min(1).default(1)),
 });
 
-const routes = new Hono()
+export const expensesRoute = new Hono()
   .get("/", getUser, zValidator("query", getParamsSchema), async (c) => {
     const user = c.var.user;
     const { limit, page } = c.req.valid("query");
 
-    const expenses = await db
+    let expenses = await db
       .select()
       .from(expensesTable)
       .where(eq(expensesTable.userId, user.id))
       .orderBy(desc(expensesTable.createdAt))
       .limit(limit)
       .offset((page - 1) * limit);
+
+    // type ExpensesType = typeof expenses;
+    // //@ts-ignore
+    // let a: ExpensesType = "fukc you"
 
     return c.json({ expenses: expenses });
   })
@@ -96,5 +108,3 @@ const routes = new Hono()
 //   const id = c.req.param('id')
 //   return c.json({})
 // })
-
-export default routes;

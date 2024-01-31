@@ -5,7 +5,7 @@ import {
   type UserType,
 } from "@kinde-oss/kinde-typescript-sdk";
 
-import { Hono, type Context, type MiddlewareHandler } from "hono";
+import { type Context, type MiddlewareHandler } from "hono";
 import { getCookie, setCookie, deleteCookie } from "hono/cookie";
 
 export const kindeClient = createKindeServerClient(
@@ -79,24 +79,3 @@ export const getUser: MiddlewareHandler<{
     return c.json({ error: "Unauthorized" }, 401);
   }
 };
-
-export const authRoutes = new Hono()
-  .get("/logout", async (c) => {
-    const logoutUrl = await kindeClient.logout(sessionManager(c));
-    return c.redirect(logoutUrl.toString());
-  })
-  .get("/login", async (c) => {
-    const loginUrl = await kindeClient.login(sessionManager(c));
-    return c.redirect(loginUrl.toString());
-  })
-  .get("/register", async (c) => {
-    const registerUrl = await kindeClient.register(sessionManager(c));
-    return c.redirect(registerUrl.toString());
-  })
-  .get("/callback", async (c) => {
-    await kindeClient.handleRedirectToApp(
-      sessionManager(c),
-      new URL(c.req.url)
-    );
-    return c.redirect("/");
-  });
