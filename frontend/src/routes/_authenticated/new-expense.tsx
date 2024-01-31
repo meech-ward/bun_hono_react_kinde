@@ -4,18 +4,31 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { zodValidator } from "@tanstack/zod-form-adapter";
-import { Calendar } from "@/components/ui/calendar";
+// import { Calendar } from "@/components/ui/calendar";
+import React, { Suspense } from "react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
-import { PostExpense } from "@server/postTypes";
+import { type PostExpense, postExpenseSchema } from "@server/postTypes";
 
 import { useNavigate } from "@tanstack/react-router";
 
 import api from "@/lib/api";
 
-export default function NewExpense() {
+import { createFileRoute } from "@tanstack/react-router";
+
+const Calendar = React.lazy(() =>
+  import("@/components/ui/calendar").then((module) => ({
+    default: module.Calendar,
+  })),
+);
+
+export const Route = createFileRoute("/_authenticated/new-expense")({
+  component: NewExpensePage,
+});
+
+function NewExpensePage() {
   const navigate = useNavigate({ from: "/new-expense" });
 
   const mutation = useMutation({
@@ -67,7 +80,7 @@ export default function NewExpense() {
             <form.Field
               name="title"
               validators={{
-                onChange: PostExpense.shape.title,
+                onChange: postExpenseSchema.shape.title,
               }}
               children={(field) => (
                 <Label>
@@ -88,7 +101,7 @@ export default function NewExpense() {
             <form.Field
               name="amount"
               validators={{
-                onChange: PostExpense.shape.amount,
+                onChange: postExpenseSchema.shape.amount,
               }}
               children={(field) => (
                 <Label>
@@ -97,9 +110,7 @@ export default function NewExpense() {
                     type="number"
                     value={field.state.value}
                     onBlur={field.handleBlur}
-                    onChange={(e) =>
-                      field.handleChange(e.target.value)
-                    }
+                    onChange={(e) => field.handleChange(e.target.value)}
                   />
                   {field.state.meta.errors && (
                     <em role="alert">{field.state.meta.errors.join(", ")}</em>
@@ -113,12 +124,14 @@ export default function NewExpense() {
             <form.Field
               name="date"
               children={(field) => (
-                <Calendar
-                  mode="single"
-                  selected={field.state.value}
-                  onSelect={(date) => field.handleChange(date || new Date())}
-                  className="rounded-md border"
-                />
+                <Suspense fallback={<div>Loading...</div>}>
+                  <Calendar
+                    mode="single"
+                    selected={field.state.value}
+                    onSelect={(date) => field.handleChange(date || new Date())}
+                    className="rounded-md border"
+                  />
+                </Suspense>
               )}
             />
           </div>

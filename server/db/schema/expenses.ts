@@ -27,10 +27,10 @@ export const expenses = pgTable(
     return {
       nameIdx: index("userId_idx").on(table.userId),
     };
-  }
+  },
 );
 
-export const InsertExpense = createInsertSchema(expenses);
-export type InsertExpense = z.infer<typeof InsertExpense>;
-export const SelectExpense = createSelectSchema(expenses);
-export type SelectExpense = z.infer<typeof SelectExpense>;
+export const insertExpenseSchema = createInsertSchema(expenses);
+export type InsertExpense = z.infer<typeof insertExpenseSchema>;
+export const selectExpenseSchema = createSelectSchema(expenses);
+export type SelectExpense = z.infer<typeof selectExpenseSchema>;

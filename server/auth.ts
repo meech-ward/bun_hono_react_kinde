@@ -1,11 +1,11 @@
 import {
   createKindeServerClient,
   GrantType,
-  SessionManager,
-  UserType,
+  type SessionManager,
+  type UserType,
 } from "@kinde-oss/kinde-typescript-sdk";
 
-import { Hono, Context, MiddlewareHandler } from "hono";
+import { Hono, type Context, type MiddlewareHandler } from "hono";
 import { getCookie, setCookie, deleteCookie } from "hono/cookie";
 
 export const kindeClient = createKindeServerClient(

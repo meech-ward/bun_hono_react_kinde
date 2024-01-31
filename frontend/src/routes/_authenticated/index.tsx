@@ -3,16 +3,21 @@ import { formatCurrency } from "@/lib/utils";
 import api from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
+import { createFileRoute } from "@tanstack/react-router";
+
+export const Route = createFileRoute("/_authenticated/")({
+  component: HomePage,
+});
 
 async function getTotalExpense() {
-  const res = await api.expenses.total.$get()
+  const res = await api.expenses.total_amount.$get()
   if (!res.ok) {
     throw new Error("Something went wrong");
   }
   return res.json();
 }
 
-export default function HomePage() {
+function HomePage() {
   const { isPending, error, data } = useQuery({
     queryKey: ["getTotalSpent"],
     queryFn: getTotalExpense,

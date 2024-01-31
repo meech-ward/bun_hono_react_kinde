@@ -13,15 +13,21 @@ import { formatCurrency } from "@/lib/utils";
 import api from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
+import { createFileRoute } from "@tanstack/react-router";
+
+export const Route = createFileRoute("/_authenticated/all-expenses")({
+  component: AllExpenses,
+});
+
 async function getAllExpenses() {
-  const res = await api.expenses.$get();
+  const res = await api.expenses.$get({ query: { limit: "10", page: "1" } });
   if (!res.ok) {
     throw new Error("Something went wrong");
   }
   return res.json();
 }
 
-export default function AllExpenses() {
+function AllExpenses() {
   const { isPending, error, data } = useQuery({
     queryKey: ["getAllExpenses"],
     queryFn: getAllExpenses,

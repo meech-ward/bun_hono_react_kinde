@@ -3,7 +3,13 @@ import { Button } from "@/components/ui/button";
 import { userQueryOptions } from "@/lib/user-query";
 import { useQuery } from "@tanstack/react-query";
 
-export default function ProfilePage() {
+import { createFileRoute } from "@tanstack/react-router";
+
+export const Route = createFileRoute("/_authenticated/profile")({
+  component: ProfilePage,
+});
+
+function ProfilePage() {
 
   const {data: user} = useQuery(userQueryOptions);
 

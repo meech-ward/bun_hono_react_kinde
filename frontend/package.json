@@ -14,18 +14,17 @@
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-slot": "^1.0.2",
     "@tanstack/react-form": "^0.13.1",
+    "@tanstack/react-query": "^5.17.1",
+    "@tanstack/react-router": "^1.15.2",
+    "@tanstack/router-vite-plugin": "^1.12.3",
     "@tanstack/zod-form-adapter": "^0.13.1",
     "class-variance-authority": "^0.7.0",
-    "@tanstack/react-query": "^5.17.1",
-    "@tanstack/react-router": "^1.1.6",
     "clsx": "^2.1.0",
-    "date-fns": "^3.1.0",
-    "hono": "^3.12.0",
     "lucide-react": "^0.306.0",
     "react": "^18.2.0",
     "react-day-picker": "^8.10.0",
     "react-dom": "^18.2.0",
-    "tailwind-merge": "^2.2.0",
+    "tailwind-merge": "2.2.1",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
@@ -42,7 +41,9 @@
     "eslint-plugin-react-refresh": "^0.4.5",
     "i": "^0.3.7",
     "postcss": "^8.4.33",
+    "rollup-plugin-visualizer": "^5.12.0",
     "tailwindcss": "^3.4.0",
+    "terser": "^5.27.0",
     "typescript": "^5.2.2",
     "vite": "^5.0.8"
   }
