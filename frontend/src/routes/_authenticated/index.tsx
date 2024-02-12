@@ -10,7 +10,7 @@ export const Route = createFileRoute("/_authenticated/")({
 });
 
 async function getTotalExpense() {
-  const res = await api.expenses.total_amount.$get()
+  const res = await api.expenses["total-amount"].$get() //api.expenses.["total-amount"].$get()
   if (!res.ok) {
     throw new Error("Something went wrong");
   }

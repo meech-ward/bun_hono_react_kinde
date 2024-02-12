@@ -15,6 +15,13 @@
       "when": 1705388824973,
       "tag": "0001_high_golden_guardian",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1707719759912,
+      "tag": "0002_glossy_juggernaut",
+      "breakpoints": true
     }
   ]
 }

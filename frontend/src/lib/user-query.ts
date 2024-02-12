@@ -17,7 +17,7 @@ export const userQueryOptions = queryOptions({
 });
 
 export async function getTotalExpense() {
-  const res = await api.expenses.total_amount.$get();
+  const res = await api.expenses["total-amount"].$get();
   if (!res.ok) {
     throw new Error("Something went wrong");
   }

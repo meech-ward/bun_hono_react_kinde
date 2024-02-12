@@ -3,7 +3,7 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { expenses as expensesTable } from "../db/schema/expenses";
 
-import { db, desc, eq, sum, and, count } from "../db";
+import { db, desc, eq, sum, and, count, sql } from "../db";
 import { z } from "zod";
 import { getUser } from "../auth";
 
@@ -32,6 +32,12 @@ const getParamsSchema = z.object({
   page: z.string().optional().pipe(z.coerce.number().int().min(1).default(1)),
 });
 
+const expenseSchema = z.object({
+  title: z.string().min(3).max(20),
+  amount: z.number().int().positive(),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+});
+
 export const expensesRoute = new Hono()
   .get("/", getUser, zValidator("query", getParamsSchema), async (c) => {
     const user = c.var.user;
@@ -52,6 +58,8 @@ export const expensesRoute = new Hono()
     return c.json({ expenses: expenses });
   })
   .post("/", getUser, zValidator("json", postExpenseSchema), async (c) => {
+    const body = await c.req.json();
+    const result = getParamsSchema.parse(body);
     const expense = await c.req.valid("json");
     const user = c.var.user;
 
@@ -62,7 +70,18 @@ export const expensesRoute = new Hono()
 
     return c.json({ expense: dbExpense }, 201);
   })
-  .get("/total_amount", getUser, async (c) => {
+  .post("/form", getUser, async (c) => {
+    const user = c.var.user;
+    const expense = await c.req.formData();
+    const password = expense.get("password");
+    console.log(`change${user.given_name} password to ${password}`);
+    // const dbExpense = await db
+    //   .insert(expensesTable)
+    //   .values({ ...expense, userId: user.id })
+    //   .returning();
+    return c.json({ expense: {} }, 201);
+  })
+  .get("/total-amount", getUser, async (c) => {
     const user = c.var.user;
     const result = await db
       .select({ value: sum(expensesTable.amount) })
